@@ -1,0 +1,11 @@
+Problem Statement
+  
+   Your task is to build a model that predicts students 'final exams score based on their study routines. Create a Google Form to collect      data on:
+  
+    Daily hours of sleep
+    Use of mobile while studying
+    Sleep hours before exam
+    Attendance percentage
+    Participation in doubt sessions
+
+Use this data to build a linear regression model to predict the final score out of 100.Focus on data preprocessing, handling missing values, and model evaluation using RMSE or MAE
