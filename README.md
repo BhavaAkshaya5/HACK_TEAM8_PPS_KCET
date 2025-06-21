@@ -4,32 +4,32 @@ This project demonstrates the application of **Linear Regression** to predict a 
 
 ### Problem Statement
 
-Educational institutions often seek to identify students at risk of underperforming, allowing for timely intervention. By leveraging historical data and regression analysis, we aim to predict the final scores of students using relevant features such as:
+   Your task is to build a model that predicts students 'final exams score based on their study routines. Create a Google Form to collect      data on:
+  
+    Daily hours of sleep
+    Use of mobile while studying
+    Sleep hours before exam
+    Attendance percentage
+    Participation in doubt sessions
 
-- Attendance records
-- Previous test scores
-- Study hours
-- Participation in extracurricular activities
-- Socioeconomic background (optional)
+Use this data to build a linear regression model to predict the final score out of 100.Focus on data preprocessing, handling missing values, and model evaluation using RMSE or MAE
 
 ### Dataset
 
 The dataset used in this project contains student information, including:
 
 - `Hours_Studied`
-- `Previous_Scores`
+- `Daily hours of sleep`
+- `Use of mobile while studying`
 - `Attendance_Percentage`
 - `Participation`
 - `Final_Score` (target variable)
-
-> **Note:** You can replace or extend these features based on your actual dataset.
 
 ### Approach
 
 1. **Data Preparation:**  
    - Load the dataset and inspect for missing values or outliers.
    - Perform necessary data cleaning and preprocessing.
-   - Split the data into training and testing sets.
 
 2. **Model Building:**  
    - Use scikit-learn’s `LinearRegression` model.
@@ -37,37 +37,61 @@ The dataset used in this project contains student information, including:
    - Predict final scores on the test data.
 
 3. **Evaluation:**  
-   - Evaluate the model using metrics such as Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and R² Score.
+   - Evaluate the model using metrics such as Mean Squared Error (MSE)
    - Visualize predictions vs. actual scores.
 
 ### Example Code
 
 ```python
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import numpy as np
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+import pickle
+sc=pd.read_csv('/content/Final Exam Score (1).csv')
+sc.head()
+sc.isnull().sum()
+sc.dropna(inplace=True)
+sc.info()
+from sklearn.preprocessing import LabelEncoder
+x=LabelEncoder()
+sc['Enter_Your_Name']=x.fit_transform(sc['Enter Your Name'])
+x1=LabelEncoder()
+sc['Usage of mobile phone while studying']=x.fit_transform(sc['Usage of mobile phone while studying'])
+x2=LabelEncoder()
+sc['Participation in doubt sessions']=x.fit_transform(sc['Participation in doubt sessions'])
+sc.tail()
+LR=LinearRegression()
 
-# Load dataset
-data = pd.read_csv('student_scores.csv')
+# Clean percentage column
+sc['Percentage of Attendance'] = sc['Percentage of Attendance'].str.replace('%', '').astype(float)
 
-# Features and target
-X = data[['Hours_Studied', 'Previous_Scores', 'Attendance_Percentage', 'Participation']]
-y = data['Final_Score']
+# Define input and output variables
+ind = sc[['Enter_Your_Name', 'What is the dialy hours of study?', 'Usage of mobile phone while studying', 
+          'Sleep Hours before exam?', 'Percentage of Attendance', 'Participation in doubt sessions']]
+dep = sc['Final Score']
 
-# Split data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Fit the model
+LR.fit(ind, dep)
 
-# Build and train the model
-model = LinearRegression()
-model.fit(X_train, y_train)
+with open('/content/Final_scorepickle.pkl','wb') as f:
+  pickle.dump(LR,f)
+print("model trained and saved as 'Final_Score.pkl'")
 
-# Make predictions
-y_pred = model.predict(X_test)
+from sklearn.metrics import mean_squared_error
+val=LR.predict(ind)
+# Use a regression metric like mean_squared_error
+# You can choose other regression metrics like mean_absolute_error or r2_score
+mse = mean_squared_error(dep, val)
+print(f"Mean Squared Error: {mse}")
 
-# Evaluate
-print("MSE:", mean_squared_error(y_test, y_pred))
-print("R² Score:", r2_score(y_test, y_pred))
+n=int(input("Enter_Your_Name"))
+hr=int(input("What is the dialy hours of study?"))
+mo=int(input("Usage of mobile phone while studying"))
+sl=int(input("Sleep Hours before exam?"))
+at=int(input("Percentage of Attendance"))
+d=int(input("Participation in doubt sessions"))
+
+ans=LR.predict([[n,hr,mo,sl,at,d]])
 ```
 
 ### Results
@@ -76,21 +100,7 @@ The model provides predictions for students' final scores, which can help educat
 
 ### Requirements
 
-- Python 3.x
 - pandas
 - scikit-learn
-- matplotlib (optional, for visualization)
-
-Install dependencies using:
-
-```bash
-pip install pandas scikit-learn matplotlib
-```
-
-### License
-
-This project is licensed under the MIT License.
-
----
 
 Feel free to use or modify this project as a starting point for your own predictive analytics in education!
